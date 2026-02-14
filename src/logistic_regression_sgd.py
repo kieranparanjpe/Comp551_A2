@@ -5,7 +5,7 @@ from tqdm import tqdm
 import matplotlib.pyplot as plt
 
 def logistic(z):
-    return 1 / (1 + np.exp(-z))
+    return 1 / (1 + np.exp(-z.clip(-500, 500))) # clip for numerical stability
 
 class LogisticRegression:
 
@@ -49,8 +49,8 @@ class LogisticRegression:
         self.weights -= self.learning_rate * self.gradient(index)
 
     def ce_loss(self, X, y):
-        loss = ((y.transpose() @ np.logaddexp(0, -self.logit(X))
-                 + (1-y).transpose() @ np.logaddexp(0, self.logit(X))) / X.shape[0])
+        z = self.logit(X)
+        loss = (y * np.logaddexp(0, -z) + (1 - y) * np.logaddexp(0, z)).mean()
         loss += self.lambda_ / 2 * (self.weights[1:].T @ self.weights[1:])
         return loss.item()
 
@@ -64,7 +64,10 @@ class LogisticRegression:
         self.rng = np.random.default_rng(2026)
         self.weights = self.rng.random(self.dataset.X.shape[1]).reshape(-1, 1)
 
-        for epoch in tqdm(range(self.epochs)):
+        for epoch in range(self.epochs):
+            perm = self.rng.permutation(self.trainX.shape[0])
+            self.trainX = self.trainX[perm]
+            self.trainY = self.trainY[perm]
             for batch_index in range(0, self.trainX.shape[0], self.batch_size):
                 self.update_weights(batch_index)
             stats.append(
