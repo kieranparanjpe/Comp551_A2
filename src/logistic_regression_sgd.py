@@ -2,7 +2,6 @@ import numpy
 import numpy as np
 from dataset import Dataset
 from tqdm import tqdm
-import matplotlib.pyplot as plt
 
 def logistic(z):
     return 1 / (1 + np.exp(-z.clip(-500, 500))) # clip for numerical stability

@@ -1,10 +1,6 @@
 import numpy as np
 from sklearn.linear_model import LogisticRegression as SkLogisticRegression
 from sklearn.linear_model import LogisticRegressionCV as SkLogisticRegressionCV
-
-from sklearn.model_selection import GridSearchCV
-from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import StandardScaler
 from logistic_regression_sgd import LogisticRegression
 from dataset import Dataset
 import plots
