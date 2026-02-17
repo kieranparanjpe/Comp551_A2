@@ -1,3 +1,4 @@
+import sys
 import numpy as np
 from sklearn.linear_model import LogisticRegression as SkLogisticRegression
 from sklearn.linear_model import LogisticRegressionCV as SkLogisticRegressionCV
@@ -6,7 +7,7 @@ from dataset import Dataset
 import plots
 from tqdm import tqdm
 
-from src.plots import plot_sparsity, plot_reg_path
+from plots import plot_sparsity, plot_reg_path
 
 
 def task1(d):
@@ -15,16 +16,19 @@ def task1(d):
     epochs = 200 # only doing 200 epochs because otherwise we generate many plots. Also, looking at graph of 200
     # epochs we can see performance after <200 epochs.
     regularizations = [0, 10**-3]
-
+    all_stats = []
     for bs in tqdm(batch_sizes):
         for lr in learning_rates:
             for r in regularizations:
                 regression = LogisticRegression(d, epochs=epochs, lambda_=r, learning_rate=lr, batch_size=bs)
                 stats = regression.train()
-                plots.display_epoch_train_test(stats[:, 0], stats[:, 1:4],
-               f"Task 1 (BS={bs}, LR={lr}, Lambda={r}) CE Loss",False)
-                plots.display_epoch_train_test(stats[:, 0], stats[:, 4:],
-               f"Task 1 (BS={bs}, LR={lr}, Lambda={r}) Accuracy", False,"Accuracy")
+                all_stats.append((bs, lr, r, stats))
+
+    for bs, lr, r, stats in all_stats:
+        plots.display_epoch_train_test(stats[:, 0], stats[:, 1:4],
+                                       f"Task 1 (BS={bs}, LR={lr}, Lambda={r}) CE Loss", False)
+        plots.display_epoch_train_test(stats[:, 0], stats[:, 4:],
+                                       f"Task 1 (BS={bs}, LR={lr}, Lambda={r}) Accuracy", False, "Accuracy")
 
 def print_task2(arr):
     print("---------------------------------------")
@@ -157,18 +161,28 @@ def task4(d):
     plots.plot_cv_acc_vs_c(Cs, mean_cv_acc)
 
 
+def main():
+    d = Dataset()
+
+    arguments = sys.argv
+
+    if '1' in arguments:
+        task1(d)
+    if '2T' in arguments:
+        task2(d)
+    if '2L' in arguments:
+        arr = np.load("stats_task2.npy")
+        print_task2(arr)
+    if '2B' in arguments:
+        task4(d)
+    if '3' in arguments:
+        task3(d)
+    if '4' in arguments:
+        task4(d)
 
 
 if __name__ == '__main__':
-    d = Dataset()
-    arr = np.load("stats_task2.npy")
-    # task1(d)
-    # to retrain uncomment this line - values are saved in stats_task2.npy
-    # task2(d)
-    # task2_best_model(d)
-    # print_task2(arr)
-    # task3(d)
-    task4(d)
+    main()
 
 
 
