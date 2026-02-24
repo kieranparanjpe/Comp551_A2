@@ -81,7 +81,7 @@ def task3(d):
     regularizations = [0] + [10 ** -x for x in range(8)]
     means_of_each = []
     for r in regularizations:
-        regression = LogisticRegression(d, epochs=16, lambda_=r, learning_rate=0.1, batch_size=16)
+        regression = LogisticRegression(d, epochs=200, lambda_=r, learning_rate=0.1, batch_size=16)
         stats = regression.train_cross_validation(10)
         means_of_each.append([
             stats[:, -1, 1].mean(), stats[:, -1, 1].std(),
@@ -165,7 +165,6 @@ def main():
     d = Dataset()
 
     arguments = sys.argv
-
     if '1' in arguments:
         task1(d)
     if '2T' in arguments:
