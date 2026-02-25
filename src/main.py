@@ -40,12 +40,12 @@ def print_task2(arr):
     sorted_by_acc = arr[arr[:, 2].argsort()[::-1]]
     print(sorted_by_acc[0:10])
 
-    # best model is 8.00000,0.10000,125.00000,0.10000
+    # best model is 8.00000,0.10000,175.00000,0.010000
     # because if you inspect the best acc, std deviation includes the accuracy of the best ce, but best ce std does
     # not include ce of best acc, so we take the best ce, which has params above.
 
 def task2_best_model(d):
-    regression = LogisticRegression(d, epochs=125, lambda_=0.1, learning_rate=0.1, batch_size=8)
+    regression = LogisticRegression(d, epochs=175, lambda_=0.01, learning_rate=0.1, batch_size=8)
     stats = regression.train()
     plots.display_epoch_train_test(stats[:, 0], stats[:, 1:4],
                                    f"Task 2 Best model CE Loss", False)
@@ -173,7 +173,7 @@ def main():
         arr = np.load("stats_task2.npy")
         print_task2(arr)
     if '2B' in arguments:
-        task4(d)
+        task2_best_model(d)
     if '3' in arguments:
         task3(d)
     if '4' in arguments:
